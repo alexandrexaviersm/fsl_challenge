@@ -9,6 +9,8 @@ defmodule App.Store.Bag do
   schema "bags" do
     field :title, :string
     field :volume, :integer
+    field :payloadVolume, :integer, virtual: true, default: 0
+    field :availableVolume, :integer, virtual: true, default: 0
     has_many :cuboids, App.Store.Cuboid
 
     timestamps()
