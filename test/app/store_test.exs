@@ -5,25 +5,23 @@ defmodule App.StoreTest do
   alias App.Store
 
   describe "cuboids" do
-    alias App.Store.Cuboid
-
     def fixture do
       {:ok, bag} =
         Store.create_bag(%{
           volume: 25,
           title: "Bag 0"
         })
-  
+
       %{bag: bag}
     end
-  
+
     def fixtures do
       {:ok, bag} =
         Store.create_bag(%{
           volume: 100,
           title: "Bag 0"
         })
-  
+
       cuboids =
         1..@sample_size
         |> Enum.to_list()
@@ -35,10 +33,10 @@ defmodule App.StoreTest do
               width: i,
               bag_id: bag.id
             })
-  
+
           cuboid |> Repo.preload(:bag)
         end)
-  
+
       %{bag: bag, cuboids: cuboids}
     end
 
@@ -49,45 +47,47 @@ defmodule App.StoreTest do
 
     test "get_cuboid/1 returns the cuboid with given id" do
       %{cuboids: cuboids} = fixtures()
-      cuboid = (hd cuboids)
+      cuboid = hd(cuboids)
       assert Store.get_cuboid(cuboid.id) == cuboid
     end
 
     test "get_cuboid/1 returns nil with invalid id" do
-      %{cuboids: cuboids} = fixtures()
       assert Store.get_cuboid(2) == nil
     end
 
     test "create_cuboid/1 with valid data creates a cuboid" do
       %{bag: bag} = fixture()
-      assert {:ok, %Cuboid{} = cuboid} = Store.create_cuboid(%{
-        depth: 1,
-        height: 2,
-        width: 3,
-        bag_id: bag.id 
-      })
+
+      assert {:ok, _} =
+               Store.create_cuboid(%{
+                 depth: 1,
+                 height: 2,
+                 width: 3,
+                 bag_id: bag.id
+               })
     end
 
     test "create_cuboid/1 with invalid data returns error changeset" do
       %{bag: bag} = fixture()
-      assert {:error, %Ecto.Changeset{}} = Store.create_cuboid(%{
-        depth: nil,
-        height: 20,
-        width: 20,
-        bag_id: bag.id 
-      })
+
+      assert {:error, %Ecto.Changeset{}} =
+               Store.create_cuboid(%{
+                 depth: nil,
+                 height: 20,
+                 width: 20,
+                 bag_id: bag.id
+               })
     end
   end
 
   describe "bags" do
-    alias App.Store.Bag
-
     @valid_attrs %{
-      volume: 1,
-      title: "Bag 1"
+      volume: 10,
+      title: "Bag 1",
+      payloadVolume: 8,
+      availableVolume: 2
     }
 
-    @update_attrs %{}
     @invalid_attrs %{
       title: nil
     }
@@ -97,6 +97,14 @@ defmodule App.StoreTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> Store.create_bag()
+
+      {:ok, _} =
+        Store.create_cuboid(%{
+          depth: 2,
+          height: 2,
+          width: 2,
+          bag_id: bag.id
+        })
 
       bag |> Repo.preload(:cuboids)
     end
@@ -112,11 +120,21 @@ defmodule App.StoreTest do
     end
 
     test "create_bag/1 with valid data creates a bag" do
-      assert {:ok, %Bag{} = bag} = Store.create_bag(@valid_attrs)
+      assert {:ok, _} = Store.create_bag(@valid_attrs)
     end
 
     test "create_bag/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Store.create_bag(@invalid_attrs)
+    end
+
+    test "create_bag/1 with one cuboid and check payloadVolume" do
+      bag = bag_fixture()
+      assert bag.payloadVolume == @valid_attrs.payloadVolume
+    end
+
+    test "create_bag/1 with one cuboid and check availableVolume" do
+      bag = bag_fixture()
+      assert bag.availableVolume == @valid_attrs.availableVolume
     end
   end
 end
