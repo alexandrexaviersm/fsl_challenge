@@ -58,6 +58,8 @@ defmodule App.Store do
     |> Repo.update()
   end
 
+  def delete_cuboid(cuboid), do: Repo.delete(cuboid)
+
   alias App.Store.Bag
 
   @doc """

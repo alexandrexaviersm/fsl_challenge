@@ -22,5 +22,11 @@ defmodule App.Store.Cuboid do
     |> validate_required([:width, :height, :depth])
     |> cast_assoc(:bag, require: true)
     |> assoc_constraint(:bag, require: true)
+
+    # |> validate_bag_space
   end
+
+  # defp validate_bag_space(changeset) do
+  #  add_error(changeset, :volume, "Insufficient space in bag")
+  # end
 end

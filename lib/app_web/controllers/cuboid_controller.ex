@@ -34,4 +34,16 @@ defmodule AppWeb.CuboidController do
       render(conn, "show.json", cuboid: cuboid)
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    case Store.get_cuboid(id) do
+      nil ->
+        send_resp(conn, 404, "")
+
+      %Cuboid{} = cuboid ->
+        with {:ok, _cuboid} <- Store.delete_cuboid(cuboid) do
+          send_resp(conn, :no_content, "")
+        end
+    end
+  end
 end
