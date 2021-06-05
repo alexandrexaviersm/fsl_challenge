@@ -147,14 +147,19 @@ defmodule AppWeb.CuboidControllerTest do
 
   describe "update cuboid" do
     test "renders cuboid when data is valid", %{conn: conn} do
+      %{cuboids: cuboids} = fixtures()
+      cuboid = hd(cuboids)
+
       cuboid_to_update = %{
         depth: 2,
         height: 2,
         width: 2
       }
 
+      conn = put(conn, Routes.cuboid_path(conn, :update, cuboid), cuboid: cuboid_to_update)
+
       cuboid_updated = json_response(conn, 200)
-      assert cuboid_to_update.id == cuboid_updated["id"]
+      assert cuboid.id == cuboid_updated["id"]
       assert cuboid_to_update.height == cuboid_updated["height"]
       assert cuboid_to_update.width == cuboid_updated["width"]
       assert cuboid_to_update.depth == cuboid_updated["depth"]

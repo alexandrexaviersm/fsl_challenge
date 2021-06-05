@@ -26,4 +26,12 @@ defmodule AppWeb.CuboidController do
       cuboid -> render(conn, "show.json", cuboid: cuboid)
     end
   end
+
+  def update(conn, %{"id" => id, "cuboid" => attrs}) do
+    cuboid = Store.get_cuboid(id)
+
+    with {:ok, cuboid} <- Store.update_cuboid(cuboid, attrs) do
+      render(conn, "show.json", cuboid: cuboid)
+    end
+  end
 end

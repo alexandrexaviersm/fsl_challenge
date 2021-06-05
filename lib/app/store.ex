@@ -52,6 +52,12 @@ defmodule App.Store do
     |> Repo.insert()
   end
 
+  def update_cuboid(cuboid, attrs) do
+    cuboid
+    |> Cuboid.changeset(attrs)
+    |> Repo.update()
+  end
+
   alias App.Store.Bag
 
   @doc """

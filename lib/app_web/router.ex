@@ -7,7 +7,7 @@ defmodule AppWeb.Router do
 
   scope "/", AppWeb do
     pipe_through :api
-    resources "/cuboids", CuboidController, only: [:index, :create, :show]
+    resources "/cuboids", CuboidController, only: [:index, :create, :show, :update]
     resources "/bags", BagController, only: [:index, :create, :show]
   end
 end
