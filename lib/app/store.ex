@@ -60,10 +60,6 @@ defmodule App.Store do
 
   def delete_cuboid(cuboid), do: Repo.delete(cuboid)
 
-  # def calculate_volume( ) do
-
-  # end
-
   alias App.Store.Bag
 
   @doc """
@@ -76,7 +72,7 @@ defmodule App.Store do
 
   """
   def list_bags do
-    Repo.all(Bag) |> Repo.preload(:cuboids)
+    Repo.all(Bag) |> Repo.preload(:cuboids) |> Enum.map(&calculate_volume/1)
   end
 
   @doc """
@@ -90,7 +86,17 @@ defmodule App.Store do
       %Bag{}
 
   """
-  def get_bag(id), do: Repo.get(Bag, id) |> Repo.preload(:cuboids)
+  def get_bag(id), do: Repo.get(Bag, id) |> Repo.preload(:cuboids) |> calculate_volume
+
+  defp calculate_volume(bag) do
+    payload_volume =
+      bag.cuboids
+      |> Enum.reduce(0, fn cuboid, acc ->
+        cuboid.depth * cuboid.height * cuboid.width + acc
+      end)
+
+    %{bag | payloadVolume: payload_volume, availableVolume: bag.volume - payload_volume}
+  end
 
   @doc """
   Creates a bag.
