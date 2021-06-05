@@ -60,6 +60,10 @@ defmodule App.Store do
 
   def delete_cuboid(cuboid), do: Repo.delete(cuboid)
 
+  # def calculate_volume( ) do
+
+  # end
+
   alias App.Store.Bag
 
   @doc """

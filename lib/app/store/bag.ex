@@ -19,7 +19,7 @@ defmodule App.Store.Bag do
   @doc false
   def changeset(bag, attrs) do
     bag
-    |> cast(attrs, [:volume, :title])
+    |> cast(attrs, [:volume, :title, :payloadVolume, :availableVolume])
     |> validate_required([:volume, :title])
   end
 end
