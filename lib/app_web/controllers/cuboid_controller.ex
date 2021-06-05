@@ -26,4 +26,24 @@ defmodule AppWeb.CuboidController do
       cuboid -> render(conn, "show.json", cuboid: cuboid)
     end
   end
+
+  def update(conn, %{"id" => id, "cuboid" => attrs}) do
+    cuboid = Store.get_cuboid(id)
+
+    with {:ok, cuboid} <- Store.update_cuboid(cuboid, attrs) do
+      render(conn, "show.json", cuboid: cuboid)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    case Store.get_cuboid(id) do
+      nil ->
+        send_resp(conn, 404, "")
+
+      %Cuboid{} = cuboid ->
+        with {:ok, _cuboid} <- Store.delete_cuboid(cuboid) do
+          send_resp(conn, :no_content, "")
+        end
+    end
+  end
 end

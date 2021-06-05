@@ -16,6 +16,7 @@ defmodule AppWeb.CuboidView do
       depth: cuboid.depth,
       height: cuboid.height,
       width: cuboid.width,
+      volume: cuboid.volume,
       bag: %{id: cuboid.bag_id}
     }
   end
